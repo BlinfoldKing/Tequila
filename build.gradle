@@ -18,3 +18,7 @@ dependencies {
 application {
     mainClassName = 'Tequila.Main'  
 }
+
+run {
+    standardInput = System.in
+}
