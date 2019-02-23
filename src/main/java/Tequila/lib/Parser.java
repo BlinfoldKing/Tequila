@@ -1,6 +1,10 @@
 package Tequila.lib;
 
 public class Parser {
+    
+    public String bookAlias;
+    public String penulisAlias;
+
     public static Table parse(String command) {
         // to be implemented
         return new Table();
