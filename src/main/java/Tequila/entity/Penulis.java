@@ -8,7 +8,7 @@ public class Penulis {
     public String email;
     public String tahun_lahir;
 
-    Penulis(
+    public Penulis(
         String kode_penulis,
         String nama,
         String alamat,
