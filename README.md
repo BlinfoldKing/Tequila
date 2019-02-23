@@ -6,6 +6,9 @@ Telkom Query Language; Demi nilai A :&lt;
 2. install gradle
 3. run command below
 ```
-    gradle run
+    # give access to runner
+    chmod +x run.sh
+    # run the program
+    ./run.sh
 ```
 4. enjoy ;(
