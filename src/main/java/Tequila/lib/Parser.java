@@ -1,6 +1,7 @@
 package Tequila.lib;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,15 +63,15 @@ public class Parser {
                 return new Table();
             }
            
-            int naturalPointer = -1;
+            int joinPointer = -1;
             List<String> fromStatement = new ArrayList<String>();
             for (
                 int i = fromPointer + 1; 
                 i < formattedCommand.length; 
                 i++
             ) {
-                if (formattedCommand[i].equals("NATURAL")) {
-                    naturalPointer = i;
+                if (formattedCommand[i].equals("JOIN")) {
+                    joinPointer = i;
                     break;
                 }
                 fromStatement.add(formattedCommand[i]);
@@ -110,10 +111,32 @@ public class Parser {
                 return new Table();
             }
 
-            if (naturalPointer == -1) {
+            if (joinPointer == -1) {
                 return parse(argument, table1);
             } else {
-            
+                Table joinTable = new Table();
+                if (formattedCommand[joinPointer + 1].equals("BUKU")) {
+                    joinTable.bookRecords = fileHandler.readBuku(BUKU_FILE_PATH);
+                } else if (formattedCommand[joinPointer + 1].equals("PENULIS")) {
+                    joinTable.penulisRecord = fileHandler.readPenulis(PENULIS_FILE_PATH);
+                } else if (formattedCommand[joinPointer + 1].equals("MENULIS")) {
+                    joinTable.menulisRecord = fileHandler.readMenulis(MENULIS_FILE_PATH);
+                } else {
+                    Parser.error = true;
+                    System.out.println("ERROR: UNKNOWN entity of "+fromStatement.get(0));
+                    return new Table();
+                }
+
+                if (joinPointer + 2 <= formattedCommand.length - 1) {
+                    if (formattedCommand[joinPointer + 2].equals("JOIN")) {
+                        String[] nextStatement = Arrays.copyOfRange(formattedCommand, joinPointer + 3, formattedCommand.length);
+                        return parse(argument, Parser.join(table1, Parser.parse(joinTable, nextStatement)));
+                    } else {
+
+                    }
+                } else {
+                    return parse(argument, Parser.join(table1, joinTable));
+                }
             }
         } else {
             Parser.error = true;
@@ -239,7 +262,24 @@ public class Parser {
         return res;
     }
 
-    public static Table parse(Table from, String join) {
+    public static Table join(Table lhs, Table rhs) {
+        Table result = lhs;
+        if (rhs.bookRecords != null) {
+            result.bookRecords = rhs.bookRecords;
+        } 
+
+        if (rhs.penulisRecord != null) {
+            result.penulisRecord = rhs.penulisRecord;
+        }
+
+        if (rhs.menulisRecord != null) {
+            result.menulisRecord = rhs.menulisRecord;
+        }
+        
+        return result;
+    }
+
+    public static Table parse(Table from, String[] join) {
         Table res = new Table();
         return new Table();
     }

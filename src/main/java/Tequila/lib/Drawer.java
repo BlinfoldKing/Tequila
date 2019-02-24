@@ -2,6 +2,9 @@ package Tequila.lib;
 
 import java.lang.reflect.Field;
 import java.util.List;
+
+import javax.xml.bind.PrintConversionEvent;
+
 import java.util.ArrayList;
 
 import Tequila.entity.Buku;
@@ -89,44 +92,92 @@ public class Drawer {
         }
         System.out.println("=");
 
-        // listing value of buku
-        if (table.bookRecords != null) {
-            for (int i = 0; i < table.bookRecords.size(); i++) {
-                for (int j = 0; j < table.bookDisplayedAttribute.size(); j++) {
-                    String currAttribute = table.bookDisplayedAttribute.get(j);
-                    try {
-                        Field currField = Buku.class.getField(currAttribute);
-                        String value = currField.get(table.bookRecords.get(i)).toString();
-                        System.out.print("| "+value);
-                        for (int k = 0; k < columnSize.get(j) - value.length() + 1; k++ ) {
-                            System.out.print(" ");
-                        }
-                    } catch (Exception e) {
-                        System.out.println(e);
-                    }
-                }
-                System.out.println("|");
-            }
+        int bookWidth = 
+            (table.bookRecords != null ? table.bookDisplayedAttribute.size() : 0);
+        int penulisWidth =
+            (table.penulisRecord != null ? table.penulisDisplayedAtrribute.size() : 0);
+        int menulisWidth =
+            (table.menulisRecord != null ? table.menulisDisplayedAttribute.size() : 0);
+        int totalColumn = bookWidth + penulisWidth + menulisWidth;
+
+        int maxRecords = table.bookRecords != null ? table.bookRecords.size(): 0;
+        if (table.penulisRecord != null) {
+            maxRecords = table.penulisRecord.size() > maxRecords ? table.penulisRecord.size(): maxRecords;
         }
 
-        // listing value of penulis
-        if (table.penulisRecord != null) {
-            for (int i = 0; i < table.penulisRecord.size(); i++) {
-                for (int j = 0; j < table.penulisDisplayedAtrribute.size(); j++) {
-                    String currAttribute = table.penulisDisplayedAtrribute.get(j);
-                    try {
-                        Field currField = Penulis.class.getField(currAttribute);
-                        String value = currField.get(table.penulisRecord.get(i)).toString();
-                        System.out.print("| "+value);
-                        for (int k = 0; k < columnSize.get(j) - value.length() + 1; k++ ) {
+        if (table.menulisRecord != null) {
+            maxRecords = table.menulisRecord.size() > maxRecords ? table.menulisRecord.size(): maxRecords;
+        }
+        
+        for (int i = 0; i < maxRecords; i++) {
+            for (int j = 0; j < totalColumn; j++) {
+                if (j < bookWidth) {
+                    if (table.bookRecords != null && i < table.bookRecords.size()) {
+                        String currAttribute = table.bookDisplayedAttribute.get(j);
+                        try {
+                            Field currField = Buku.class.getField(currAttribute);
+                            String value = currField.get(table.bookRecords.get(i)).toString();
+                            System.out.print("| "+value);
+                            for (int k = 0; k < columnSize.get(j) - value.length() + 1; k++ ) {
+                                System.out.print(" ");
+                            }
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                    } else if (table.bookRecords != null) {
+                        System.out.print("| ");
+                        for (int k = 0; k < columnSize.get(j)+ 1; k++ ) {
                             System.out.print(" ");
                         }
-                    } catch (Exception e) {
-                        System.out.println(e);
                     }
                 }
-                System.out.println("|");
+                
+                if (j >= bookWidth && j < (bookWidth + penulisWidth)) {
+                    if (table.penulisRecord != null && i < table.penulisRecord.size()) {
+                        int attributPointer = j - bookWidth;
+                        String currAttribute = table.penulisDisplayedAtrribute.get(attributPointer);
+                        try {
+                            Field currField = Penulis.class.getField(currAttribute);
+                            String value = currField.get(table.penulisRecord.get(i)).toString();
+                            System.out.print("| "+value);
+                            for (int k = 0; k < columnSize.get(j) - value.length() + 1; k++ ) {
+                                System.out.print(" ");
+                            }
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                    } else if (table.penulisRecord != null) {
+                        System.out.print("| ");
+                        for (int k = 0; k < columnSize.get(j)+ 1; k++ ) {
+                            System.out.print(" ");
+                        }
+                    }
+                }
+
+                if (j >= (bookWidth + penulisWidth) && j < (bookWidth + penulisWidth + menulisWidth)) {
+                    if (table.menulisRecord != null && i < table.menulisRecord.size()) {
+                        int attributPointer = j - bookWidth - penulisWidth;
+                        String currAttribute = table.menulisDisplayedAttribute.get(attributPointer);
+                        try {
+                            Field currField = Menulis.class.getField(currAttribute);
+                            String value = currField.get(table.menulisRecord.get(i)).toString();
+                            System.out.print("| "+value);
+                            for (int k = 0; k < columnSize.get(j) - value.length() + 1; k++ ) {
+                                System.out.print(" ");
+                            }
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                    } else if (table.menulisRecord != null) {
+                        System.out.print("| ");
+                        for (int k = 0; k < columnSize.get(j)+ 1; k++ ) {
+                            System.out.print(" ");
+                        }
+                    }
+                }
+                
             }
+            System.out.println("|");
         }
 
         // listing value of menulis
