@@ -7,7 +7,14 @@ public class Penulis {
     public String alamat;
     public String no_hp;
     public String email;
-
+    
+    public Boolean kode_penulis_mask = true;
+    public Boolean nama_mask = true;
+    public Boolean tahun_lahir_mask = true;
+    public Boolean alamat_mask = true;
+    public Boolean no_hp_mask = true;
+    public Boolean email_mask = true;
+    
     public Penulis(
         String kode_penulis,
         String nama,

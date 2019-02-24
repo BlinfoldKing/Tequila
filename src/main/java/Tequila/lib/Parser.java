@@ -3,8 +3,15 @@ package Tequila.lib;
 import java.util.ArrayList;
 import java.util.List;
 
+import Tequila.lib.FileHandler;
+import Tequila.entity.*;
+
 public class Parser {
-    
+    private static final String BUKU_FILE_PATH = "./csv/buku.csv";
+    private static final String PENULIS_FILE_PATH = "./csv/penulis.csv";
+    private static final String MENULIS_FILE_PATH = "./csv/menulis.csv";
+    private static final FileHandler fileHandler = new FileHandler();
+
     public static String bookAlias = null;
     public static String penulisAlias = null;
     public static Boolean error = false;
@@ -71,10 +78,10 @@ public class Parser {
             if (fromStatement.size() == 2) {
                 if (fromStatement.get(0).equals("BUKU")) {
                     Parser.bookAlias = fromStatement.get(1);
-                    // make table1
+                    table1.bookRecords = fileHandler.readBuku(BUKU_FILE_PATH);
                 } else if (fromStatement.get(0).equals("PENULIS")) {
                     Parser.penulisAlias = fromStatement.get(1);
-                    // make table1
+                    table1.penulisRecord = fileHandler.readPenulis(PENULIS_FILE_PATH);
                 } else {
                     Parser.error = true;
                     System.out.println("ERROR: UNKNOWN entity of "+fromStatement.get(0));
@@ -82,9 +89,9 @@ public class Parser {
                 }
             } else if (fromStatement.size() == 1) {
                 if (fromStatement.get(0).equals("BUKU")) {
-                    //make table 1
+                    table1.bookRecords = fileHandler.readBuku(BUKU_FILE_PATH);
                 } else if (fromStatement.get(0).equals("PENULIS")) {
-                    // make table 1
+                    table1.penulisRecord = fileHandler.readPenulis(PENULIS_FILE_PATH);
                 } else {
                     Parser.error = true;
                     System.out.println("ERROR: UNKNOWN entity of "+fromStatement.get(0));
@@ -96,7 +103,7 @@ public class Parser {
                 return new Table();
             }
 
-            if (naturalPointer != -1) {
+            if (naturalPointer == -1) {
                 return parse(argument, table1);
             } else {
             
@@ -110,11 +117,63 @@ public class Parser {
     }
 
     public static Table parse(Argument select, Table from) {
-        Table res = new Table();
-        return new Table();
+        Table res = from;
+        for (int i = 0; i < select.attribute.size(); i++) {
+            if (select.attribute.get(i).endsWith(",")) {
+                select.attribute.set(i, select.attribute.get(i).replace(",", ""));
+            }
+            if (select.attribute.get(i).contains(".")) {
+                String[] parsedAttribute = select.attribute.get(i).split("\\.");
+                if (parsedAttribute[0].equals(Parser.bookAlias)) {
+                    try {
+                        if (Buku.class.getField(parsedAttribute[1].toLowerCase()) != null) {
+                            res.bookDisplayedAttribute.add(parsedAttribute[1].toLowerCase());
+                        }
+                    } catch (Exception e) {
+                        Parser.error = true;
+                        System.out.println(e);
+                        return new Table();
+                    }
+                }
+                if (parsedAttribute[0].equals(Parser.penulisAlias)) {
+                    try {
+                        if (Penulis.class.getField(parsedAttribute[1].toLowerCase()) != null) {
+                            res.penulisDisplayedAtrribute.add(parsedAttribute[1].toLowerCase());
+                        }
+                    } catch (Exception e) {
+                        Parser.error = true;
+                        System.out.println(e);
+                        return new Table();
+                    }
+                } else {
+                    Parser.error = true;
+                    System.out.println("Error Unknow Alias of "+parsedAttribute[1]);
+                    return new Table();
+                }
+            } else {
+                String parsedAttribute = select.attribute.get(i);
+                try {
+                    if (Buku.class.getField(parsedAttribute.toLowerCase()) != null) {
+                        res.bookDisplayedAttribute.add(parsedAttribute.toLowerCase());
+                    }
+                } catch (Exception e ) {
+                    try {
+                        if (Penulis.class.getField(parsedAttribute.toLowerCase()) != null) {
+                            res.penulisDisplayedAtrribute.add(parsedAttribute.toLowerCase());
+                        }
+                    } catch (Exception error) {
+                        Parser.error = true;
+                        System.out.println(e);
+                        return new Table();
+                    }
+                }
+            }
+        }
+
+        return res;
     }
 
-    public static Table parse(Table from, Table join) {
+    public static Table parse(Table from, String join) {
         Table res = new Table();
         return new Table();
     }
