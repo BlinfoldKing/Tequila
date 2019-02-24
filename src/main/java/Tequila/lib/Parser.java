@@ -15,6 +15,7 @@ public class Parser {
 
     public static String bookAlias = null;
     public static String penulisAlias = null;
+    public static String menulisAlias = null;
     public static Boolean error = false;
 
     public static Table parse(String command) {
@@ -83,6 +84,9 @@ public class Parser {
                 } else if (fromStatement.get(0).equals("PENULIS")) {
                     Parser.penulisAlias = fromStatement.get(1);
                     table1.penulisRecord = fileHandler.readPenulis(PENULIS_FILE_PATH);
+                } else if (fromStatement.get(0).equals("MENULIS")) {
+                    Parser.menulisAlias = fromStatement.get(1);
+                    table1.menulisRecord = fileHandler.readMenulis(MENULIS_FILE_PATH);
                 } else {
                     Parser.error = true;
                     System.out.println("ERROR: UNKNOWN entity of "+fromStatement.get(0));
@@ -93,7 +97,9 @@ public class Parser {
                     table1.bookRecords = fileHandler.readBuku(BUKU_FILE_PATH);
                 } else if (fromStatement.get(0).equals("PENULIS")) {
                     table1.penulisRecord = fileHandler.readPenulis(PENULIS_FILE_PATH);
-                } else {
+                } else if(fromStatement.get(0).equals("MENULIS")) {
+                    table1.menulisRecord = fileHandler.readMenulis(MENULIS_FILE_PATH);
+                }else {
                     Parser.error = true;
                     System.out.println("ERROR: UNKNOWN entity of "+fromStatement.get(0));
                     return new Table();
@@ -136,6 +142,13 @@ public class Parser {
                     res.penulisDisplayedAtrribute.add(attribute);
                 }
 
+                Field[] menuFields = Menulis.class.getFields();
+                for (int i = 0; i < menuFields.length; i++) {
+                    String[] formattedField = menuFields[i].toString().split("\\.");
+                    String attribute = formattedField[formattedField.length - 1];
+                    res.menulisDisplayedAttribute.add(attribute);
+                }
+
                 return res;
             } catch (Exception e) {
                 System.out.println(e);
@@ -168,6 +181,16 @@ public class Parser {
                         System.out.println(e);
                         return new Table();
                     }
+                } else if (parsedAttribute[0].equals(Parser.menulisAlias)) {
+                    try {
+                        if (Menulis.class.getField(parsedAttribute[1].toLowerCase()) != null) {
+                            res.menulisDisplayedAttribute.add(parsedAttribute[1].toLowerCase());
+                        }
+                    } catch (Exception e) {
+                        Parser.error = true;
+                        System.out.println(e);
+                        return new Table();
+                    }
                 } else {
                     Parser.error = true;
                     System.out.println("Error Unknow Alias of "+parsedAttribute[1]);
@@ -175,20 +198,40 @@ public class Parser {
                 }
             } else {
                 String parsedAttribute = select.attribute.get(i);
+                Boolean isFound = false;
+                Exception err = null;
                 try {
-                    if (Buku.class.getField(parsedAttribute.toLowerCase()) != null) {
+                    if (Buku.class.getField(parsedAttribute.toLowerCase()) != null 
+                        && res.bookRecords != null) {
                         res.bookDisplayedAttribute.add(parsedAttribute.toLowerCase());
+                        isFound = true;
                     }
-                } catch (Exception e ) {
-                    try {
-                        if (Penulis.class.getField(parsedAttribute.toLowerCase()) != null) {
-                            res.penulisDisplayedAtrribute.add(parsedAttribute.toLowerCase());
-                        }
-                    } catch (Exception error) {
-                        Parser.error = true;
-                        System.out.println(e);
-                        return new Table();
+                } catch (Exception e) {
+                    err = e;
+                }
+                try {
+                    if (Penulis.class.getField(parsedAttribute.toLowerCase()) != null
+                        && res.penulisRecord != null) {
+                        res.penulisDisplayedAtrribute.add(parsedAttribute.toLowerCase());
+                        isFound = true;
                     }
+                } catch (Exception e) {
+                    err = e;
+                }
+                try {
+                    if(Menulis.class.getField(parsedAttribute.toLowerCase()) != null
+                        && res.menulisRecord != null) {
+                        res.menulisDisplayedAttribute.add(parsedAttribute.toLowerCase());
+                        isFound = true;
+                    }
+                } catch (Exception e) {
+                    err = e;
+                }
+
+                if (!isFound) {
+                    Parser.error = true;
+                    System.out.println(err);
+                    return new Table();
                 }
             }
         }
