@@ -6,7 +6,7 @@ public class Buku {
     public String judul;
     public String tahun_terbit;
 
-    Buku(
+    public Buku(
         String no_buku,
         String penerbit,
         String judul,
