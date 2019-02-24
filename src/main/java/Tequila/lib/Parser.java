@@ -146,7 +146,7 @@ public class Parser {
             if (select.attribute.get(i).endsWith(",")) {
                 select.attribute.set(i, select.attribute.get(i).replace(",", ""));
             }
-            if (select.attribute.get(i).contains("\\.")) {
+            if (select.attribute.get(i).contains(".")) {
                 String[] parsedAttribute = select.attribute.get(i).split("\\.");
                 if (parsedAttribute[0].equals(Parser.bookAlias)) {
                     try {
@@ -158,8 +158,7 @@ public class Parser {
                         System.out.println(e);
                         return new Table();
                     }
-                }
-                if (parsedAttribute[0].equals(Parser.penulisAlias)) {
+                } else if (parsedAttribute[0].equals(Parser.penulisAlias)) {
                     try {
                         if (Penulis.class.getField(parsedAttribute[1].toLowerCase()) != null) {
                             res.penulisDisplayedAtrribute.add(parsedAttribute[1].toLowerCase());
