@@ -4,7 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Scanner;
 
+import Tequila.lib.Table;
 import Tequila.lib.Parser;
+import Tequila.lib.Drawer;
 
 public class Main {
     static Scanner input = new Scanner(System.in);
@@ -17,11 +19,13 @@ public class Main {
     }
     public static void main(String[] args) {
         String query = getInput();
-        Parser.parse(query);
+        Table result = Parser.parse(query);
         while(!query.equals("exit")) {
-            System.out.println("output: "+query.length());
+            if (!Parser.error) {
+                Drawer.generateTable(result);
+            }
             query = getInput();
-            Parser.parse(query);
+            result = Parser.parse(query);
         } 
     }
 }
