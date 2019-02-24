@@ -86,7 +86,7 @@ public class Drawer {
         }
 
         // listing value of penulis
-        if (table.penulisRecord.size() > 0) {
+        if (table.penulisRecord != null) {
             for (int i = 0; i < table.penulisRecord.size(); i++) {
                 for (int j = 0; j < table.penulisDisplayedAtrribute.size(); j++) {
                     String currAttribute = table.penulisDisplayedAtrribute.get(j);

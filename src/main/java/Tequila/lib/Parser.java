@@ -1,5 +1,6 @@
 package Tequila.lib;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,11 +119,34 @@ public class Parser {
 
     public static Table parse(Argument select, Table from) {
         Table res = from;
+
+        if (select.attribute.size() == 1 && select.attribute.get(0).equals("*")) {
+            try {
+                Field[] bukuFields = Buku.class.getFields();
+                for (int i = 0; i < bukuFields.length; i++) {
+                    String[] formattedField = bukuFields[i].toString().split("\\.");
+                    String attribute = formattedField[formattedField.length - 1];
+                    res.bookDisplayedAttribute.add(attribute);
+                }
+
+                Field[] penulisFields = Penulis.class.getFields();
+                for (int i = 0; i < penulisFields.length; i++) {
+                    String[] formattedField = penulisFields[i].toString().split("\\.");
+                    String attribute = formattedField[formattedField.length - 1];
+                    res.penulisDisplayedAtrribute.add(attribute);
+                }
+
+                return res;
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+
         for (int i = 0; i < select.attribute.size(); i++) {
             if (select.attribute.get(i).endsWith(",")) {
                 select.attribute.set(i, select.attribute.get(i).replace(",", ""));
             }
-            if (select.attribute.get(i).contains(".")) {
+            if (select.attribute.get(i).contains("\\.")) {
                 String[] parsedAttribute = select.attribute.get(i).split("\\.");
                 if (parsedAttribute[0].equals(Parser.bookAlias)) {
                     try {
