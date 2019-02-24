@@ -132,7 +132,20 @@ public class Parser {
                         String[] nextStatement = Arrays.copyOfRange(formattedCommand, joinPointer + 3, formattedCommand.length);
                         return parse(argument, Parser.join(table1, Parser.parse(joinTable, nextStatement)));
                     } else {
+                        if (joinTable.bookRecords != null) {
+                            Parser.bookAlias = formattedCommand[joinPointer + 2];
+                        } else if (joinTable.penulisRecord != null) {
+                            Parser.penulisAlias = formattedCommand[joinPointer + 2];
+                        } else if (joinTable.menulisRecord != null) {
+                            Parser.menulisAlias = formattedCommand[joinPointer + 2];
+                        } else {
+                            Parser.error = true;
+                            System.out.println("ERROR: unexpected alias");
+                            return new Table();
+                        }
 
+                        // naive implementation should you use recursion instead
+                        return parse(argument, Parser.join(table1, joinTable));
                     }
                 } else {
                     return parse(argument, Parser.join(table1, joinTable));
@@ -143,7 +156,6 @@ public class Parser {
             System.out.println("ERROR: Unknow  statement of"+formattedCommand[0]);
             return new Table();
         }
-        return new Table();
     }
 
     public static Table parse(Argument select, Table from) {
