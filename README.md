@@ -9,7 +9,8 @@ The tables are **penulis**, **buku**, and **menulis**.
 The SQL Parser's feature limited to:
 1. Selecting attribute(s) from a table
 2. Selecting attribute(s) from two table using outer join
-3. Display the error from incorrect SQL statement
+3. Selecting attributes) from table with alias
+4. Display the error from incorrect SQL statement
 
 ## How to run
 1. Clone this repository
