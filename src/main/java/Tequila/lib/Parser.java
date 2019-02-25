@@ -31,7 +31,7 @@ public class Parser {
         if (formattedCommand[0].equals("SELECT")) {
             String lastStatement = formattedCommand[formattedCommand.length - 1];
             if (!lastStatement.endsWith(";")) {
-                System.out.println("ERROR: Missing Semicolon at the end of statement");
+                System.out.println("ERROR: Kurang titik koma di akhir statement");
                 Parser.error = true;
                 return new Table();
             }

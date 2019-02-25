@@ -7,6 +7,7 @@ public class Penulis {
     public String alamat;
     public String no_hp;
     public String email;
+    public String rate;
    
     public Penulis(
         String kode_penulis,
@@ -14,7 +15,8 @@ public class Penulis {
         String tahun_lahir,
         String alamat,
         String no_hp,
-        String email
+        String email,
+        String rate
     ) {
         this.kode_penulis = kode_penulis;
         this.nama = nama;
@@ -22,5 +24,6 @@ public class Penulis {
         this.alamat = alamat;
         this.no_hp = no_hp;
         this.email = email;
+        this.rate = rate;
     }
 }

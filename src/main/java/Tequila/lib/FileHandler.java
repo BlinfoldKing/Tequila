@@ -32,7 +32,8 @@ public class FileHandler{
                         val[0], //no_buku
                         val[1], //penerbit
                         val[2], //judul
-                        val[3]  //tahun_terbit
+                        val[3],  //tahun_terbit
+                        val[4]
                     );
 
                     bList.add(buku);
@@ -64,7 +65,8 @@ public class FileHandler{
                         val[2], //tahun_lahir
                         val[3], //alamat
                         val[4], //no_hp
-                        val[5]  //email
+                        val[5],  //email
+                        val[6]
                     );
 
                     pList.add(penulis);
