@@ -51,6 +51,12 @@ public class Parser {
                 argument.attribute.add(formattedCommand[i]);
             }
 
+            if (argument.attribute.size() == 0) {
+                System.out.println("ERROR: Missing query argument");
+                Parser.error = true;
+                return new Table();
+            }
+
             if (!formattedCommand[fromPointer].equals("FROM")) {
                 Parser.error = true;
                 System.out.println("Excpected FROM statement but found'"+formattedCommand[fromPointer-1]+"'instead");
@@ -75,6 +81,12 @@ public class Parser {
                     break;
                 }
                 fromStatement.add(formattedCommand[i]);
+            }
+            
+            if (fromStatement.size() == 0) {
+                System.out.println("ERROR: Missing FROM argument");
+                Parser.error = true;
+                return new Table();
             }
 
             Table table1 = new Table();
